@@ -12,6 +12,12 @@ Client.prototype.connect = function(endpoint,connected){
     console.log("connected");
     socket.emit('init',{clientType:'eddy',id: client.id});
     connected();
+    for(var name in client.dataReaders) {
+      if(client.dataReaders.hasOwnProperty(name)){
+        var reader = client.dataReaders[name];
+        reader.iid = setInterval(reader.callback,reader.interval);
+      }
+    }
   });
 
   socket.on('disconnect', function(){
@@ -26,13 +32,6 @@ Client.prototype.connect = function(endpoint,connected){
       client.commands[commandName](data);
     }
   });
-
-  for(var name in client.dataReaders) {
-    if(client.dataReaders.hasOwnProperty(name)){
-      var reader = client.dataReaders[name];
-      reader.iid = setInterval(reader.callback,reader.interval);
-    }
-  }
 }
 
 Client.prototype.shutdown = function(){
