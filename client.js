@@ -4,29 +4,32 @@ var Client = function(id){
   this.commands = {};
 }
 
-Client.prototype.connect = function(endpoint){
-  this.socket = require('socket.io-client')(endpoint);
-  this.socket.on('connect', function(){
+Client.prototype.connect = function(endpoint,connected){
+  var socket = require('socket.io-client')(endpoint);
+  var client = this;
+  client.socket = socket;
+  socket.on('connect', function(){
     console.log("connected");
-    this.socket.emit('init',{clientType:'eddy',id: id});
+    socket.emit('init',{clientType:'eddy',id: client.id});
+    connected();
   });
 
-  this.socket.on('disconnect', function(){
+  socket.on('disconnect', function(){
     console.log("disconnected");
-    this.shutdown();
+    client.shutdown();
     console.log("shutdown");
   });
 
-  this.socket.on('command',function(data){
+  socket.on('command',function(data){
     var commandName = data.command;
-    if (this.commands[commandName]){
-      this.commands[commandName](data);
+    if (client.commands[commandName]){
+      client.commands[commandName](data);
     }
   });
 
-  for(var name in this.dataReaders) {
-    if(this.dataReaders.hasOwnProperty(name)){
-      var reader = this.dataReaders[name];
+  for(var name in client.dataReaders) {
+    if(client.dataReaders.hasOwnProperty(name)){
+      var reader = client.dataReaders[name];
       reader.iid = setInterval(reader.callback,reader.interval);
     }
   }
