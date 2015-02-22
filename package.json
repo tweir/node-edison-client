@@ -1,0 +1,13 @@
+{
+  "name": "node-edison-client",
+  "description": "Node Edison Client",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "private": true,
+  "files":["client.js"],
+  "dependencies": {
+      "socket.io-client": "*"
+  }
+}
