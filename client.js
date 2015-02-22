@@ -46,11 +46,12 @@ Client.prototype.shutdown = function(){
 }
 
 Client.prototype.read = function(sensorName,valueFn,interval){
+  var client = this;
   var callback = function(){
     var value = valueFn();
     var eventName = 'eddy_data';
-    var eventData = {id:this.id,sensor:sensorName,value:value,ts:new Date()};
-    this.socket.emit(eventName,eventData);
+    var eventData = {id:client.id,sensor:sensorName,value:value,ts:new Date()};
+    client.socket.emit(eventName,eventData);
   }
   this.dataReaders[sensorName] = {callback:callback,interval:interval};
 }
